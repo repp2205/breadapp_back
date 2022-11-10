@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.security.auth.login.CredentialException;
 
-@CrossOrigin(origins = "", allowedHeaders = "")
+@CrossOrigin(origins = "")
 @RestController
 @RequestMapping(value = "/user")
 @Log4j2
