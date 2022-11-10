@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.security.auth.login.CredentialException;
 
+@CrossOrigin(origins = "", allowedHeaders = "")
 @RestController
 @RequestMapping(value = "/order")
 @Log4j2
