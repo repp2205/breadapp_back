@@ -20,7 +20,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         http.cors()
                 .and().csrf().disable()
                 .authorizeRequests()
-                .anyRequest().access("isAuthenticated() or hasIpAddress('127.0.0.1/24') or hasIpAddress('::1')")
+                .anyRequest().access("isAuthenticated() or hasIpAddress('0.0.0.0/0') or hasIpAddress('::1')")
                 .and().httpBasic().and().headers().referrerPolicy(ReferrerPolicyHeaderWriter.ReferrerPolicy.ORIGIN);
     }
 
