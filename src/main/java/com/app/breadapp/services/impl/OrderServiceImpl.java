@@ -28,33 +28,48 @@ public class OrderServiceImpl implements OrderService {
 
 
     @Override
-    public OrderDTO getOrder(Integer userId, Integer branchOfficeId) {
+    public List<OrderDTO> getOrder(Integer userId, Integer branchOfficeId) {
         List<Object> objectsList = orderRepository.findByUserIdAndBranchOfficeId(userId);
         OrderDTO orderDTO = new OrderDTO();
-        List<ProductDTO> productDtoList = new ArrayList<>();
+        List<OrderDTO> orderDTOList = new ArrayList<>();
 
-        if(!objectsList.isEmpty()){
-            List<?> orderList;
+        if(!objectsList.isEmpty()) {
+            List<ProductDTO> productList = new ArrayList<>();
+            Integer orderId = (Integer) Arrays.asList((Object[])objectsList.get(0)).get(0);
+            boolean dataPrymary = true;
+            for(int i = 0; i < objectsList.size(); i++){
+                List<?> orderOnList = Arrays.asList((Object[])objectsList.get(i));
+                if(orderId != orderOnList.get(0)){
+                    orderId = (Integer) orderOnList.get(0);
+                    i--;
+                    orderDTO.setProducts(productList);
+                    orderDTOList.add(orderDTO);
+                    dataPrymary = true;
+                    orderDTO = new OrderDTO();
+                    productList = new ArrayList<>();
+                }else{
+                    if(dataPrymary){
+                        orderDTO.setOrderId(Integer.valueOf(orderOnList.get(0).toString()));
+                        orderDTO.setOrderDate(orderOnList.get(1).toString());
+                        orderDTO.setPickUpTime(orderOnList.get(2).toString());
+                        orderDTO.setStatus(Integer.valueOf(orderOnList.get(3).toString()));
+                        dataPrymary = false;
+                    }
 
-            orderList = Arrays.asList((Object[])objectsList.get(0));
-            orderDTO.setUserId(Integer.valueOf(orderList.get(0).toString()));
-            orderDTO.setOrderDate(orderList.get(1).toString());
-            orderDTO.setPickUpTime(orderList.get(2).toString());
-            orderDTO.setStatus(Integer.valueOf(orderList.get(3).toString()));
-            orderDTO.setProducts(productDtoList);
-
-            for (int i = 0; i < objectsList.size(); i++){
-                ProductDTO productDTO = new ProductDTO();
-                orderList = Arrays.asList((Object[])objectsList.get(i));
-                productDTO.setId(Integer.valueOf(orderList.get(4).toString()));
-                productDTO.setName(orderList.get(5).toString());
-                productDTO.setCategory(orderList.get(6).toString());
-                productDTO.setImage(orderList.get(7).toString());
-                productDTO.setQuantity(Integer.valueOf(orderList.get(8).toString()));
-                productDTO.setTotal_amount(Double.valueOf(orderList.get(9).toString()));
-                productDtoList.add(productDTO);
+                    ProductDTO productDTO = new ProductDTO();
+                    productDTO.setId((Integer) orderOnList.get(4));
+                    productDTO.setName((orderOnList.get(5)).toString());
+                    productDTO.setCategory(orderOnList.get(6).toString());
+                    productDTO.setImage(orderOnList.get(7).toString());
+                    productDTO.setQuantity(Integer.valueOf(orderOnList.get(8).toString()));
+                    productDTO.setTotal_amount((Double) orderOnList.get(9));
+                    productList.add(productDTO);
+                    orderId = (Integer) orderOnList.get(0);
+                }
             }
+            orderDTO.setProducts(productList);
+            orderDTOList.add(orderDTO);
         }
-        return orderDTO;
+        return orderDTOList;
     }
 }

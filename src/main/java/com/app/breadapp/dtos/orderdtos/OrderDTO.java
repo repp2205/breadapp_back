@@ -7,7 +7,7 @@ import java.util.List;
 
 @Data
 public class OrderDTO {
-    private Integer userId;
+    private Integer orderId;
     private String orderDate;
     private String pickUpTime;
     private Integer status;
