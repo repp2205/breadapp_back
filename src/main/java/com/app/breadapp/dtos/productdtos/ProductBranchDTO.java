@@ -1,15 +1,14 @@
 package com.app.breadapp.dtos.productdtos;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 
 @Data
-public class ProductDTO {
-    private Integer id;
+public class ProductBranchDTO {
+    private Integer productId;
     private String name;
+    private String description;
     private String category;
     private String image;
     private Integer quantity;
-    @JsonProperty("total_amount")
-    private Double totalAmount;
+    private Double amount;
 }
