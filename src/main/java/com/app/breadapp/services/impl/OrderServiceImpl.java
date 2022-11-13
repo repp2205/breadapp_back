@@ -31,8 +31,15 @@ public class OrderServiceImpl implements OrderService {
     OrderProducRepository orderProducRepository;
 
     @Override
-    public List<OrderUserDTO> getOrder(Integer userId, Integer branchOfficeId) {
-        List<Object> objectsList = orderRepository.findByUserId(userId);
+    public List<OrderUserDTO> getOrder(Integer userId, Integer branchOfficeId) throws Exception {
+        List<Object> objectsList;
+        if(userId != null){
+            objectsList = orderRepository.findByUserId(userId);
+        }else if(branchOfficeId != null){
+            objectsList = orderRepository.findByBranchOfficeid(branchOfficeId);
+        }else{
+            throw new Exception("Must send a branchOfficeId or userId");
+        }
         OrderUserDTO orderDTO = new OrderUserDTO();
         List<OrderUserDTO> orderDTOList = new ArrayList<>();
 
@@ -76,7 +83,7 @@ public class OrderServiceImpl implements OrderService {
         return orderDTOList;
     }
 
-    public OrderIdDTO registerOrder(OrderRegisterDTO orderRegisterDTO) throws ParseException {
+    public OrderIdDTO registerOrder(OrderRegisterDTO orderRegisterDTO) {
         Order order = new Order();
         order.setUserId(orderRegisterDTO.getUserId());
         order.setBranchOfficeid(orderRegisterDTO.getBranchOfficeId());
