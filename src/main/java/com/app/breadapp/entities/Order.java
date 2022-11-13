@@ -12,13 +12,13 @@ public class Order {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column
-    private int id;
+    private Integer id;
     @Column(name = "user_id")
-    private String userId;
+    private Integer userId;
     @Column
     private String orderDate;
     @Column(name = "pick_up_time")
     private String pickUpTime;
     @Column
-    private String status;
+    private Integer status;
 }

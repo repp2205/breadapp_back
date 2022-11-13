@@ -6,7 +6,7 @@ import lombok.Data;
 import java.util.List;
 
 @Data
-public class OrderDTO {
+public class OrderUserDTO {
     private Integer orderId;
     private String orderDate;
     private String pickUpTime;

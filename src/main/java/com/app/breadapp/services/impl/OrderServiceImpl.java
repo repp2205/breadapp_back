@@ -1,37 +1,41 @@
 package com.app.breadapp.services.impl;
 
-import com.app.breadapp.dtos.orderdtos.OrderDTO;
+import com.app.breadapp.dtos.orderdtos.OrderIdDTO;
+import com.app.breadapp.dtos.orderdtos.OrderRegisterDTO;
+import com.app.breadapp.dtos.orderdtos.OrderUserDTO;
 import com.app.breadapp.dtos.productdtos.ProductDTO;
-import com.app.breadapp.dtos.userdtos.RegisterDTO;
-import com.app.breadapp.dtos.userdtos.UserDTO;
-import com.app.breadapp.entities.User;
+import com.app.breadapp.dtos.productdtos.ProductRegisterDTO;
+import com.app.breadapp.entities.Order;
+import com.app.breadapp.entities.OrderProduct;
+import com.app.breadapp.repositories.OrderProducRepository;
 import com.app.breadapp.repositories.OrderRepository;
-import com.app.breadapp.repositories.UserRepository;
 import com.app.breadapp.services.OrderService;
-import com.app.breadapp.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
-import javax.security.auth.login.CredentialException;
-import java.sql.Timestamp;
-import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 
 @Service
 public class OrderServiceImpl implements OrderService {
 
+    private static final String FORMAT_DATE_LONG = "yyyy-MM-dd HH:mm:ss";
+
     @Autowired
     OrderRepository orderRepository;
 
+    @Autowired
+    OrderProducRepository orderProducRepository;
 
     @Override
-    public List<OrderDTO> getOrder(Integer userId, Integer branchOfficeId) {
+    public List<OrderUserDTO> getOrder(Integer userId, Integer branchOfficeId) {
         List<Object> objectsList = orderRepository.findByUserIdAndBranchOfficeId(userId);
-        OrderDTO orderDTO = new OrderDTO();
-        List<OrderDTO> orderDTOList = new ArrayList<>();
+        OrderUserDTO orderDTO = new OrderUserDTO();
+        List<OrderUserDTO> orderDTOList = new ArrayList<>();
 
         if(!objectsList.isEmpty()) {
             List<ProductDTO> productList = new ArrayList<>();
@@ -45,7 +49,7 @@ public class OrderServiceImpl implements OrderService {
                     orderDTO.setProducts(productList);
                     orderDTOList.add(orderDTO);
                     dataPrymary = true;
-                    orderDTO = new OrderDTO();
+                    orderDTO = new OrderUserDTO();
                     productList = new ArrayList<>();
                 }else{
                     if(dataPrymary){
@@ -71,5 +75,27 @@ public class OrderServiceImpl implements OrderService {
             orderDTOList.add(orderDTO);
         }
         return orderDTOList;
+    }
+
+    public OrderIdDTO registerOrder(OrderRegisterDTO orderRegisterDTO){
+        Order order = new Order();
+        order.setUserId(orderRegisterDTO.getUserId());
+        order.setOrderDate(DateTimeFormatter.ofPattern(FORMAT_DATE_LONG).format(LocalDateTime.now()));
+        order.setPickUpTime(orderRegisterDTO.getPickUpTime());
+        order.setStatus(0);
+        orderRepository.save(order);
+        if(order.getId() != null){
+            List<OrderProduct> orderProductList = new ArrayList<>();
+            for (ProductRegisterDTO productRegisterDTO : orderRegisterDTO.getProducts()) {
+                OrderProduct product = new OrderProduct();
+                product.setOrderId(order.getId());
+                product.setProductId(productRegisterDTO.getProductId());
+                product.setQuantity(productRegisterDTO.getQuantity());
+                product.setTotalAmount(productRegisterDTO.getTotalAmount());
+                orderProductList.add(product);
+            }
+            orderProducRepository.saveAll(orderProductList);
+        }
+        return new OrderIdDTO(order.getId());
     }
 }
