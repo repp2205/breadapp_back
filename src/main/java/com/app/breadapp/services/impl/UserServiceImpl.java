@@ -19,9 +19,10 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public String registerUser(RegisterDTO registerDTO) throws CredentialException {
-
         if(userRepository.findByEmail(registerDTO.getEmail()) == null){
             User user = new User();
+            user.setBranchOfficeId(null);
+            user.setBakeryId(null);
             user.setName(registerDTO.getName());
             user.setLastName(registerDTO.getLastName());
             user.setEmail(registerDTO.getEmail());
@@ -44,6 +45,8 @@ public class UserServiceImpl implements UserService {
             if(user.getStatus() == 1){
                 UserDTO userDTO = new UserDTO();
                 userDTO.setId(user.getId());
+                userDTO.setBranchOfficeId(user.getBranchOfficeId());
+                userDTO.setBakeryId(user.getBakeryId());
                 userDTO.setName(user.getName());
                 userDTO.setLastName(user.getLastName());
                 userDTO.setEmail(user.getEmail());

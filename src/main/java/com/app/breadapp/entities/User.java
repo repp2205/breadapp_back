@@ -12,6 +12,10 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column
     private int id;
+    @Column(name = "branch_office_id")
+    private Integer branchOfficeId;
+    @Column(name = "bakery_id")
+    private Integer bakeryId;
     @Column
     private String name;
     @Column(name = "last_name")
