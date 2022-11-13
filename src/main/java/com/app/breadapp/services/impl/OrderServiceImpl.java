@@ -62,7 +62,7 @@ public class OrderServiceImpl implements OrderService {
                     productDTO.setCategory(orderOnList.get(6).toString());
                     productDTO.setImage(orderOnList.get(7).toString());
                     productDTO.setQuantity(Integer.valueOf(orderOnList.get(8).toString()));
-                    productDTO.setTotal_amount((Double) orderOnList.get(9));
+                    productDTO.setTotalAmount((Double) orderOnList.get(9));
                     productList.add(productDTO);
                     orderId = (Integer) orderOnList.get(0);
                 }
