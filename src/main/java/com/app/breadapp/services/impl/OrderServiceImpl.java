@@ -13,6 +13,9 @@ import com.app.breadapp.services.OrderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.sql.Timestamp;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -24,6 +27,7 @@ import java.util.List;
 public class OrderServiceImpl implements OrderService {
 
     private static final String FORMAT_DATE_LONG = "yyyy-MM-dd HH:mm:ss";
+    private final SimpleDateFormat DATE_TIME_FORMAT = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
     @Autowired
     OrderRepository orderRepository;
@@ -33,7 +37,7 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public List<OrderUserDTO> getOrder(Integer userId, Integer branchOfficeId) {
-        List<Object> objectsList = orderRepository.findByUserIdAndBranchOfficeId(userId);
+        List<Object> objectsList = orderRepository.findByUserId(userId);
         OrderUserDTO orderDTO = new OrderUserDTO();
         List<OrderUserDTO> orderDTOList = new ArrayList<>();
 
@@ -77,24 +81,23 @@ public class OrderServiceImpl implements OrderService {
         return orderDTOList;
     }
 
-    public OrderIdDTO registerOrder(OrderRegisterDTO orderRegisterDTO){
+    public OrderIdDTO registerOrder(OrderRegisterDTO orderRegisterDTO) throws ParseException {
         Order order = new Order();
         order.setUserId(orderRegisterDTO.getUserId());
+        order.setBranchOfficeid(orderRegisterDTO.getBranchOfficeId());
         order.setOrderDate(DateTimeFormatter.ofPattern(FORMAT_DATE_LONG).format(LocalDateTime.now()));
         order.setPickUpTime(orderRegisterDTO.getPickUpTime());
         order.setStatus(0);
         orderRepository.save(order);
         if(order.getId() != null){
-            List<OrderProduct> orderProductList = new ArrayList<>();
             for (ProductRegisterDTO productRegisterDTO : orderRegisterDTO.getProducts()) {
                 OrderProduct product = new OrderProduct();
                 product.setOrderId(order.getId());
                 product.setProductId(productRegisterDTO.getProductId());
                 product.setQuantity(productRegisterDTO.getQuantity());
                 product.setTotalAmount(productRegisterDTO.getTotalAmount());
-                orderProductList.add(product);
+                orderProducRepository.save(product);
             }
-            orderProducRepository.saveAll(orderProductList);
         }
         return new OrderIdDTO(order.getId());
     }

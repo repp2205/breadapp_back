@@ -42,7 +42,7 @@ public class OrderController {
             logger.info("Executing service registerOrder");
             return ResponseEntity.status(HttpStatus.OK).body(orderService.registerOrder(orderRegisterDTO));
         } catch (Exception e) {
-            return new ResponseEntity<>(new MessageErrorResponse(e.getMessage()),HttpStatus.UNAUTHORIZED);
+            return new ResponseEntity<>(new MessageErrorResponse(e.toString()),HttpStatus.UNAUTHORIZED);
         }
     }
 }
