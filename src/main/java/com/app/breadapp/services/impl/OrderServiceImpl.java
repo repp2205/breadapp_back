@@ -12,22 +12,17 @@ import com.app.breadapp.repositories.OrderRepository;
 import com.app.breadapp.services.OrderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import java.sql.Timestamp;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.List;
 
 @Service
 public class OrderServiceImpl implements OrderService {
 
     private static final String FORMAT_DATE_LONG = "yyyy-MM-dd HH:mm:ss";
-    private final SimpleDateFormat DATE_TIME_FORMAT = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
     @Autowired
     OrderRepository orderRepository;
@@ -90,14 +85,16 @@ public class OrderServiceImpl implements OrderService {
         order.setStatus(0);
         orderRepository.save(order);
         if(order.getId() != null){
+            List<OrderProduct> orderProductList = new ArrayList<>();
             for (ProductRegisterDTO productRegisterDTO : orderRegisterDTO.getProducts()) {
                 OrderProduct product = new OrderProduct();
                 product.setOrderId(order.getId());
                 product.setProductId(productRegisterDTO.getProductId());
                 product.setQuantity(productRegisterDTO.getQuantity());
                 product.setTotalAmount(productRegisterDTO.getTotalAmount());
-                orderProducRepository.save(product);
+                orderProductList.add(product);
             }
+            orderProducRepository.saveAll(orderProductList);
         }
         return new OrderIdDTO(order.getId());
     }
