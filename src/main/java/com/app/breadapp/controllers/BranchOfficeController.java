@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.*;
 
 @CrossOrigin(origins = "")
 @RestController
-@RequestMapping(value = "/brachOffice")
+@RequestMapping(value = "/branchOffice")
 @Log4j2
 public class BranchOfficeController {
 
