@@ -2,6 +2,7 @@ package com.app.breadapp.controllers;
 
 import com.app.breadapp.dtos.MessageErrorResponse;
 import com.app.breadapp.dtos.orderdtos.OrderRegisterDTO;
+import com.app.breadapp.dtos.orderdtos.OrderStatusDTO;
 import com.app.breadapp.services.OrderService;
 import lombok.extern.log4j.Log4j2;
 import org.slf4j.Logger;
@@ -32,7 +33,7 @@ public class OrderController {
             logger.info("Executing service getOrder. userId: {}", userId, branchOfficeId);
             return ResponseEntity.status(HttpStatus.OK).body(orderService.getOrder(userId, branchOfficeId));
         } catch (Exception e) {
-            return new ResponseEntity<>(new MessageErrorResponse(e.getMessage()),HttpStatus.UNAUTHORIZED);
+            return new ResponseEntity<>(new MessageErrorResponse(e.getMessage()),HttpStatus.BAD_REQUEST);
         }
     }
 
@@ -41,6 +42,16 @@ public class OrderController {
         try {
             logger.info("Executing service registerOrder");
             return ResponseEntity.status(HttpStatus.OK).body(orderService.registerOrder(orderRegisterDTO));
+        } catch (Exception e) {
+            return new ResponseEntity<>(new MessageErrorResponse(e.toString()),HttpStatus.UNAUTHORIZED);
+        }
+    }
+
+    @PutMapping(value = "/{orderId}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Object> updateOrderStatus(@PathVariable (value = "orderId") Integer orderId, @RequestBody OrderStatusDTO orderStatusDTO){
+        try {
+            logger.info("Executing service updateOrderStatus");
+            return ResponseEntity.status(HttpStatus.OK).body(orderService.updateOrderStatus(orderStatusDTO, orderId));
         } catch (Exception e) {
             return new ResponseEntity<>(new MessageErrorResponse(e.toString()),HttpStatus.UNAUTHORIZED);
         }

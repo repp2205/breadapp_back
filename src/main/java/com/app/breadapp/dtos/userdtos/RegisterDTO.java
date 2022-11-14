@@ -5,6 +5,8 @@ import lombok.Data;
 
 @Data
 public class RegisterDTO {
+    private Integer branchOfficeId;
+    private Integer bakeryId;
     private String name;
     @JsonProperty("last_name")
     private String lastName;

@@ -2,6 +2,7 @@ package com.app.breadapp.services.impl;
 
 import com.app.breadapp.dtos.orderdtos.OrderIdDTO;
 import com.app.breadapp.dtos.orderdtos.OrderRegisterDTO;
+import com.app.breadapp.dtos.orderdtos.OrderStatusDTO;
 import com.app.breadapp.dtos.orderdtos.OrderUserDTO;
 import com.app.breadapp.dtos.productdtos.ProductDTO;
 import com.app.breadapp.dtos.productdtos.ProductRegisterDTO;
@@ -104,5 +105,17 @@ public class OrderServiceImpl implements OrderService {
             orderProducRepository.saveAll(orderProductList);
         }
         return new OrderIdDTO(order.getId());
+    }
+
+    @Override
+    public String updateOrderStatus(OrderStatusDTO orderStatusDTO, Integer orderId) throws Exception {
+        Order order = orderRepository.findOrderById(orderId);
+        if(order != null){
+            order.setStatus(orderStatusDTO.getStatus());
+            orderRepository.save(order);
+            return "Ok";
+        }else{
+            throw new Exception("Order not exists");
+        }
     }
 }

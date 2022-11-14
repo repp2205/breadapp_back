@@ -21,8 +21,8 @@ public class UserServiceImpl implements UserService {
     public String registerUser(RegisterDTO registerDTO) throws CredentialException {
         if(userRepository.findByEmail(registerDTO.getEmail()) == null){
             User user = new User();
-            user.setBranchOfficeId(null);
-            user.setBakeryId(null);
+            user.setBranchOfficeId(registerDTO.getBranchOfficeId());
+            user.setBakeryId(registerDTO.getBakeryId());
             user.setName(registerDTO.getName());
             user.setLastName(registerDTO.getLastName());
             user.setEmail(registerDTO.getEmail());
