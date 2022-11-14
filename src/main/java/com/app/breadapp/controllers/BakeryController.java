@@ -27,10 +27,20 @@ public class BakeryController {
     BakeryService bakeryService;
 
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Object> getBakeryAndBranchs(){
+    public ResponseEntity<Object> getBakeryAndBranches(){
         try {
-            logger.info("Executing service getBakeryAndBranchs");
-            return ResponseEntity.status(HttpStatus.OK).body(bakeryService.getBakeryAndBranchs());
+            logger.info("Executing service getBakeryAndBranches");
+            return ResponseEntity.status(HttpStatus.OK).body(bakeryService.getBakeryAndBranches());
+        } catch (Exception e) {
+            return new ResponseEntity<>(new MessageErrorResponse(e.getMessage()),HttpStatus.UNAUTHORIZED);
+        }
+    }
+
+    @GetMapping(value = "/{bakeryId}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Object> getBranchesByBakeryId(@PathVariable(value = "bakeryId") Integer bakeryId){
+        try {
+            logger.info("Executing service getBranchesByBakeryId");
+            return ResponseEntity.status(HttpStatus.OK).body(bakeryService.getBranchesByBakeryId(bakeryId));
         } catch (Exception e) {
             return new ResponseEntity<>(new MessageErrorResponse(e.getMessage()),HttpStatus.UNAUTHORIZED);
         }

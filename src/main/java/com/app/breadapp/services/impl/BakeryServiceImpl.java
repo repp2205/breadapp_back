@@ -23,13 +23,13 @@ public class BakeryServiceImpl implements BakeryService {
     BranchOfficeRepository branchOfficeRepository;
 
     @Override
-    public List<BakeryDTO> getBakeryAndBranchs() {
+    public List<BakeryDTO> getBakeryAndBranches() {
         List<BakeryDTO> bakeryBranchDTOList = new ArrayList<>();
         List<Bakery> bakeryList = bakeryRepository.findAllByStatus(1);
 
         for (Bakery bakery : bakeryList) {
             BakeryDTO bakeryDTO = new BakeryDTO();
-            List<BrachDTO> brachDTOList = new ArrayList<>();
+            List<BrachDTO> branchDTOList = new ArrayList<>();
             bakeryDTO.setId(bakery.getId());
             bakeryDTO.setName(bakery.getName());
             bakeryDTO.setNit(bakery.getNit());
@@ -38,22 +38,35 @@ public class BakeryServiceImpl implements BakeryService {
             bakeryDTO.setContactPhone(bakery.getContactPhone());
             bakeryDTO.setStatus(bakery.getStatus());
             List<BranchOffice> branchOfficeList = branchOfficeRepository.findAllByBakeryIdAndStatus(bakery.getId(), 1);
-            for (BranchOffice branchOffice : branchOfficeList) {
-                BrachDTO branchDto = new BrachDTO();
-                branchDto.setId(branchOffice.getId());
-                branchDto.setBakeryId(branchOffice.getBakeryId());
-                branchDto.setName(branchOffice.getName());
-                branchDto.setContactPhone(branchOffice.getContactPhone());
-                branchDto.setAddress(branchOffice.getAddress());
-                branchDto.setOpeningTime(branchOffice.getOpeningTime());
-                branchDto.setClosingTime(branchOffice.getClosingTime());
-                branchDto.setStatus(branchOffice.getStatus());
-                brachDTOList.add(branchDto);
-            }
-            bakeryDTO.setCampus(brachDTOList);
+            fillBranchList(branchOfficeList, branchDTOList);
+            bakeryDTO.setCampus(branchDTOList);
             bakeryBranchDTOList.add(bakeryDTO);
         }
 
         return bakeryBranchDTOList;
+    }
+
+    @Override
+    public List<BrachDTO> getBranchesByBakeryId(Integer bakeryId){
+        List<BranchOffice> branchOfficeList = branchOfficeRepository.findAllByBakeryIdAndStatus(bakeryId, 1);
+        List<BrachDTO> branchDTOList = new ArrayList<>();
+        fillBranchList(branchOfficeList, branchDTOList);
+
+        return branchDTOList;
+    }
+
+    private void fillBranchList(List<BranchOffice> branchOfficeList, List<BrachDTO> brachDTOList) {
+        for (BranchOffice branchOffice : branchOfficeList) {
+            BrachDTO branchDto = new BrachDTO();
+            branchDto.setId(branchOffice.getId());
+            branchDto.setBakeryId(branchOffice.getBakeryId());
+            branchDto.setName(branchOffice.getName());
+            branchDto.setContactPhone(branchOffice.getContactPhone());
+            branchDto.setAddress(branchOffice.getAddress());
+            branchDto.setOpeningTime(branchOffice.getOpeningTime());
+            branchDto.setClosingTime(branchOffice.getClosingTime());
+            branchDto.setStatus(branchOffice.getStatus());
+            brachDTOList.add(branchDto);
+        }
     }
 }
