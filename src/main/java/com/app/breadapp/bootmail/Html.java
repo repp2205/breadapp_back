@@ -20,7 +20,7 @@ public class Html {
             "            .container {\n" +
             "                font-size: 1.4vw;\n" +
             "                margin: 0 auto;\n" +
-            "                width: 50%;\n" +
+            "                width: 80%;\n" +
             "                height: 50%;\n" +
             "            }\n" +
             "        }\n" +
@@ -140,13 +140,13 @@ public class Html {
             "                <table>\n" +
             "                    <tr>\n" +
             "                        <td class=\"banner\">\n" +
-            "                            <div class=\"link\"><b>[Link]</b></div>\n" +
+            "                            <div class=\"link\"><b>[BreadApp]</b></div>\n" +
             "                        </td>\n" +
             "                    </tr>\n" +
             "                    <tr>\n" +
             "                        <td class=\"description\">\n" +
             "                            <div>Con este enlace podrás restablecer tu contraseña</div>\n" +
-            "                            <div><b>Aqui va el link</b></div>\n" +
+            "                            <div><b>[recoverLink]</b></div>\n" +
             "                        </td>\n" +
             "                    </tr>\n" +
             "                    <tr>\n" +

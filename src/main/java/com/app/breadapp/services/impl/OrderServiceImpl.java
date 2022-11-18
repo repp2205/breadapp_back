@@ -1,5 +1,6 @@
 package com.app.breadapp.services.impl;
 
+import com.app.breadapp.controllers.OrderController;
 import com.app.breadapp.dtos.orderdtos.OrderIdDTO;
 import com.app.breadapp.dtos.orderdtos.OrderRegisterDTO;
 import com.app.breadapp.dtos.orderdtos.OrderStatusDTO;
@@ -11,19 +12,22 @@ import com.app.breadapp.entities.OrderProduct;
 import com.app.breadapp.repositories.OrderProducRepository;
 import com.app.breadapp.repositories.OrderRepository;
 import com.app.breadapp.services.OrderService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.text.ParseException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.time.temporal.TemporalAccessor;
+import java.util.*;
 
 @Service
 public class OrderServiceImpl implements OrderService {
 
     private static final String FORMAT_DATE_LONG = "yyyy-MM-dd HH:mm:ss";
+    public static final Logger logger = LoggerFactory.getLogger(OrderController.class);
+
 
     @Autowired
     OrderRepository orderRepository;
@@ -85,10 +89,14 @@ public class OrderServiceImpl implements OrderService {
     }
 
     public OrderIdDTO registerOrder(OrderRegisterDTO orderRegisterDTO) {
+        long offset = TimeZone.getDefault().getRawOffset();
+        long nowMillis = new Date().getTime();
+        Date currentDate=new Date(nowMillis + offset);
+        logger.info("Fredy Fecha: {}", currentDate);
         Order order = new Order();
         order.setUserId(orderRegisterDTO.getUserId());
         order.setBranchOfficeid(orderRegisterDTO.getBranchOfficeId());
-        order.setOrderDate(DateTimeFormatter.ofPattern(FORMAT_DATE_LONG).format(LocalDateTime.now()));
+        order.setOrderDate(DateTimeFormatter.ofPattern(FORMAT_DATE_LONG).format((TemporalAccessor) currentDate));
         order.setPickUpTime(orderRegisterDTO.getPickUpTime());
         order.setStatus(0);
         orderRepository.save(order);

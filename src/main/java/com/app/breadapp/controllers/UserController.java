@@ -71,8 +71,8 @@ public class UserController {
         MimeMessageHelper helper = new MimeMessageHelper(message);
         try {
             helper.setTo(email);
-            helper.setText(Html.FILE_CONTENT,true);
-            helper.setSubject("Mail From Spring Boot");
+            helper.setText(Html.FILE_CONTENT.replace("[recoverLink]","https://breadp-app.vercel.app/recover"),true);
+            helper.setSubject("Breadapp - Restablece tu contraseña");
         } catch (MessagingException e) {
             e.printStackTrace();
             return "Error while sending mail ..";
