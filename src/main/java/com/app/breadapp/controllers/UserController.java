@@ -1,12 +1,22 @@
 package com.app.breadapp.controllers;
 
+import com.app.breadapp.bootmail.Html;
 import com.app.breadapp.dtos.MessageErrorResponse;
 import com.app.breadapp.dtos.userdtos.RegisterDTO;
 import com.app.breadapp.services.UserService;
+import javax.mail.MessagingException;
+import javax.mail.internet.MimeMessage;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.MimeMessageHelper;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
 import lombok.extern.log4j.Log4j2;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -27,6 +37,9 @@ public class UserController {
 
     @Autowired
     UserService userService;
+
+    @Autowired
+    private JavaMailSender sender;
 
     @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Object> registerUser(@RequestBody RegisterDTO registerDTO){
@@ -51,4 +64,21 @@ public class UserController {
             return new ResponseEntity<>(new MessageErrorResponse(e.getMessage()),HttpStatus.UNAUTHORIZED);
         }
     }
+
+    @PostMapping("/recover")
+    public String sendMail(@RequestParam String email) throws MessagingException {
+        MimeMessage message = sender.createMimeMessage();
+        MimeMessageHelper helper = new MimeMessageHelper(message);
+        try {
+            helper.setTo(email);
+            helper.setText(Html.FILE_CONTENT,true);
+            helper.setSubject("Mail From Spring Boot");
+        } catch (MessagingException e) {
+            e.printStackTrace();
+            return "Error while sending mail ..";
+        }
+        sender.send(message);
+        return "Mail Sent Success!";
+    }
+
 }
