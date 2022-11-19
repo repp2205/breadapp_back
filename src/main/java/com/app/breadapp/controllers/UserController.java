@@ -2,6 +2,8 @@ package com.app.breadapp.controllers;
 
 import com.app.breadapp.bootmail.Html;
 import com.app.breadapp.dtos.MessageErrorResponse;
+import com.app.breadapp.dtos.MessageResponse;
+import com.app.breadapp.dtos.orderdtos.PasswordDTO;
 import com.app.breadapp.dtos.userdtos.RegisterDTO;
 import com.app.breadapp.services.UserService;
 import javax.mail.MessagingException;
@@ -10,6 +12,7 @@ import javax.mail.internet.MimeMessage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -38,9 +41,6 @@ public class UserController {
     @Autowired
     UserService userService;
 
-    @Autowired
-    private JavaMailSender sender;
-
     @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Object> registerUser(@RequestBody RegisterDTO registerDTO){
         try {
@@ -66,19 +66,28 @@ public class UserController {
     }
 
     @PostMapping("/recover")
-    public String sendMail(@RequestParam String email) throws MessagingException {
-        MimeMessage message = sender.createMimeMessage();
-        MimeMessageHelper helper = new MimeMessageHelper(message);
-        try {
-            helper.setTo(email);
-            helper.setText(Html.FILE_CONTENT.replace("[recoverLink]","https://breadp-app.vercel.app/recover"),true);
-            helper.setSubject("Breadapp - Restablece tu contraseña");
-        } catch (MessagingException e) {
-            e.printStackTrace();
-            return "Error while sending mail ..";
+    public ResponseEntity<Object> sendMail(@RequestParam String email){
+        try{
+            logger.info("Executing service recover. Email: {}", email);
+            return ResponseEntity.status(HttpStatus.OK).body(new MessageResponse(userService.recover(email)));
+        } catch (BadCredentialsException e) {
+            log.error(ERROR, e);
+            return new ResponseEntity<>(new MessageErrorResponse(e.getMessage()), HttpStatus.CONFLICT);
+        } catch (Exception e) {
+            return new ResponseEntity<>(new MessageErrorResponse(e.getMessage()),HttpStatus.INTERNAL_SERVER_ERROR);
         }
-        sender.send(message);
-        return "Mail Sent Success!";
     }
 
+    @PutMapping(value ="/{userId}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Object> changePass(@PathVariable Integer userId, @RequestBody PasswordDTO passwordDTO){
+        try{
+            logger.info("Executing service changePass. userId: {}", userId);
+            return ResponseEntity.status(HttpStatus.OK).body(new MessageResponse(userService.changePass(userId, passwordDTO)));
+        } catch (BadCredentialsException e) {
+            log.error(ERROR, e);
+            return new ResponseEntity<>(new MessageErrorResponse(e.getMessage()), HttpStatus.CONFLICT);
+        } catch (Exception e) {
+            return new ResponseEntity<>(new MessageErrorResponse(e.getMessage()),HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
 }
