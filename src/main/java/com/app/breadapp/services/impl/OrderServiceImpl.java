@@ -17,6 +17,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.TemporalAccessor;
@@ -88,15 +89,11 @@ public class OrderServiceImpl implements OrderService {
         return orderDTOList;
     }
 
-    public OrderIdDTO registerOrder(OrderRegisterDTO orderRegisterDTO) {
-        long offset = TimeZone.getDefault().getRawOffset();
-        long nowMillis = new Date().getTime();
-        Date currentDate=new Date(nowMillis + offset);
-        logger.info("Fredy Fecha: {}", currentDate);
+    public OrderIdDTO registerOrder(OrderRegisterDTO orderRegisterDTO) throws ParseException {
         Order order = new Order();
         order.setUserId(orderRegisterDTO.getUserId());
         order.setBranchOfficeid(orderRegisterDTO.getBranchOfficeId());
-        order.setOrderDate(DateTimeFormatter.ofPattern(FORMAT_DATE_LONG).format((TemporalAccessor) currentDate));
+        order.setOrderDate(DateTimeFormatter.ofPattern(FORMAT_DATE_LONG).format((LocalDateTime.now().plusHours(5))));
         order.setPickUpTime(orderRegisterDTO.getPickUpTime());
         order.setStatus(0);
         orderRepository.save(order);
