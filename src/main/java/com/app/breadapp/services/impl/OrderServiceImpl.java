@@ -96,7 +96,7 @@ public class OrderServiceImpl implements OrderService {
         order.setUserId(orderRegisterDTO.getUserId());
         order.setBranchOfficeid(orderRegisterDTO.getBranchOfficeId());
         order.setOrderDate(DateTimeFormatter.ofPattern(FORMAT_DATE_LONG).format((LocalDateTime.now().minusHours(5))));
-        order.setPickUpTime(odt.minusHours(5).toString().substring(0, odt.toString().length()-1));
+        order.setPickUpTime(odt.minusHours(5).toString().substring(0, odt.toString().length()-1).replace("T"," "));
         order.setStatus(0);
         orderRepository.save(order);
         if(order.getId() != null){
