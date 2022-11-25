@@ -19,6 +19,7 @@ import org.springframework.stereotype.Service;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.TemporalAccessor;
 import java.util.*;
@@ -89,12 +90,13 @@ public class OrderServiceImpl implements OrderService {
         return orderDTOList;
     }
 
-    public OrderIdDTO registerOrder(OrderRegisterDTO orderRegisterDTO) throws ParseException {
+    public OrderIdDTO registerOrder(OrderRegisterDTO orderRegisterDTO) {
+        OffsetDateTime odt = OffsetDateTime.parse ( orderRegisterDTO.getPickUpTime()+".000+00" , DateTimeFormatter.ofPattern ( "yyyy-MM-dd HH:mm:ss.SSSX" ) ) ;
         Order order = new Order();
         order.setUserId(orderRegisterDTO.getUserId());
         order.setBranchOfficeid(orderRegisterDTO.getBranchOfficeId());
-        order.setOrderDate(DateTimeFormatter.ofPattern(FORMAT_DATE_LONG).format((LocalDateTime.now().plusHours(5))));
-        order.setPickUpTime(orderRegisterDTO.getPickUpTime());
+        order.setOrderDate(DateTimeFormatter.ofPattern(FORMAT_DATE_LONG).format((LocalDateTime.now().minusHours(5))));
+        order.setPickUpTime(odt.minusHours(5).toString().substring(0, odt.toString().length()-1));
         order.setStatus(0);
         orderRepository.save(order);
         if(order.getId() != null){
